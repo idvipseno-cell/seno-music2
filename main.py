@@ -5,7 +5,7 @@
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pytgcalls import PyTgCalls
+from pytgcalls import GroupCall  # Updated import
 from config import Config
 from handlers import start_handler, music_handler, dev_handler
 from utils.helpers import auto_leave_assistant
@@ -13,7 +13,7 @@ from utils.helpers import auto_leave_assistant
 # Initialize bot and assistant
 app = Client("music_bot", api_id=Config.API_ID, api_hash=Config.API_HASH, bot_token=Config.BOT_TOKEN)
 assistant = Client("assistant", api_id=Config.API_ID, api_hash=Config.API_HASH, session_string=Config.SESSION_STRING)
-calls = PyTgCalls(assistant)
+calls = GroupCall(assistant)  # Updated to GroupCall
 
 # Start the bot
 @app.on_message(filters.command("start"))
@@ -59,7 +59,7 @@ async def auto_leave_task():
 async def main():
     await app.start()
     await assistant.start()
-    await calls.start()
+    await calls.start()  # Updated method
     asyncio.create_task(auto_leave_task())
     await app.idle()
 
