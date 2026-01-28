@@ -7,7 +7,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pytgcalls import GroupCall  # Updated import
 from config import Config
-from handlers import start_handler, music_handler, dev_handler
+from handlers import start_handler, handle_download, handle_play, handle_stop, handle_pause, handle_dev_panel, handle_broadcast, handle_force_sub  # Updated imports
 from utils.helpers import auto_leave_assistant
 
 # Initialize bot and assistant
@@ -18,37 +18,37 @@ calls = GroupCall(assistant)  # Updated to GroupCall
 # Start the bot
 @app.on_message(filters.command("start"))
 async def start(client, message):
-    await start_handler.handle_start(client, message)
+    await start_handler(client, message)
 
 # Music commands (Arabic and English)
 @app.on_message(filters.regex(r"^(يوت|تنزيل|نزل|انطيني|download|yt)$"))
 async def download_music(client, message):
-    await music_handler.handle_download(client, message)
+    await handle_download(client, message)
 
 @app.on_message(filters.regex(r"^(شغل|تشغيل|ابدي|play|start)$"))
 async def play_music(client, message):
-    await music_handler.handle_play(client, message)
+    await handle_play(client, message, calls)  # Pass calls
 
 @app.on_message(filters.regex(r"^(اوكف|سكب|stop)$"))
 async def stop_music(client, message):
-    await music_handler.handle_stop(client, message)
+    await handle_stop(client, message, calls)  # Pass calls
 
 @app.on_message(filters.regex(r"^(ايقاف مؤقت|pause)$"))
 async def pause_music(client, message):
-    await music_handler.handle_pause(client, message)
+    await handle_pause(client, message, calls)  # Pass calls
 
 # Developer commands
 @app.on_message(filters.user(Config.OWNER_ID) & filters.command("devpanel"))
 async def dev_panel(client, message):
-    await dev_handler.handle_dev_panel(client, message)
+    await handle_dev_panel(client, message)
 
 @app.on_message(filters.user(Config.OWNER_ID) & filters.command("broadcast"))
 async def broadcast(client, message):
-    await dev_handler.handle_broadcast(client, message)
+    await handle_broadcast(client, message)
 
 @app.on_message(filters.user(Config.OWNER_ID) & filters.command("forcesub"))
 async def force_sub(client, message):
-    await dev_handler.handle_force_sub(client, message)
+    await handle_force_sub(client, message)
 
 # Auto leave assistant after 300 seconds
 async def auto_leave_task():
